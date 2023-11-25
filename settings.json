@@ -3,5 +3,6 @@
     "tokenCharset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", // pwease dwont twoutch mwe
     "port" : 12345, // sets the port of the websocket server
     "sendDataBack": false, // decides if the server sends data back to the socket where it came from
-    "multipleTypesInTable" : false // if set to true you can put multiple variable types into a table
+    "multipleTypesInTable" : false, // if set to true you can put multiple variable types into a table
+    "messageLenghtMaximum" : 256 // sets the max lenght of a message
 }

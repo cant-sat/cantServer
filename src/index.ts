@@ -2,14 +2,21 @@ import * as webSocket from "ws"
 import { connection } from "./ws.js"
 import * as randomstring from "randomstring"
 import { readFileSync, writeFileSync, } from "fs"
-import { formatToken, isWhole, removeComments, writeTables } from "./format.js"
+import { formatText, isWhole, removeComments, writeTables } from "./format.js"
 import { error, table } from "console"
 import { log } from "./logger.js"
 import ON_DEATH from "death"
 
 // Read in the settings
 var rawData = readFileSync("settings.json", "utf8")
-export const settings: {token: number, port: number, tokenCharset: string, sendDataBack :boolean, multipleTypesInTable : boolean } = JSON.parse(removeComments(rawData))
+export const settings: {
+    token: number, 
+    port: number, 
+    tokenCharset: string, 
+    sendDataBack :boolean, 
+    multipleTypesInTable : boolean, 
+    messageLenghtMaximum : number
+} = JSON.parse(removeComments(rawData))
 
 
 // PORT
@@ -28,7 +35,7 @@ if (settings.token > 0 && isWhole(settings.token)) {
 
         var t = readFileSync("token.txt", "utf8")
         // formats the token.txt
-        token = formatToken(t)
+        token = formatText(t)
 
     }
     catch (err) {
