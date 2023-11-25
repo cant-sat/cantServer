@@ -96,7 +96,7 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
 
             } catch (err) {
                 // throws an error if there is a problem parsing the json
-                logError(["Bad message: " + data.toString()])
+                logError(["Bad message: " + data.toString(), err])
                 ws.terminate()
                 return
             }

@@ -50,12 +50,14 @@ export function formatText(data: string): string {
 export function writeTables() {
     var time = dateTime({ local: false, showMilliseconds: false })
 
-    if (tables.keys.length > 0) {
+    if (tables.size > 0) {
         //tries creating tables
         try { mkdirSync("./tables") } catch { }
 
         //creates the current table with the current time
         mkdirSync("./tables/" + time)
+    } else {
+        log("No data to write out")
     }
 
     tables.forEach((value, key: string) => {
