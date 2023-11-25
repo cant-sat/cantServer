@@ -3,12 +3,12 @@ import { connection } from "./ws.js"
 import * as randomstring from "randomstring"
 import { readFileSync, writeFileSync, } from "fs"
 import { formatToken, isWhole, removeComments } from "./format.js"
-import { error } from "console"
+import { error, table } from "console"
 import { log } from "./logger.js"
 
 // Read in the settings
 var rawData = readFileSync("settings.json", "utf8")
-export const settings: { valuesToStore: number, token: number, port: number, tokenCharset: string } = JSON.parse(removeComments(rawData))
+export const settings: {token: number, port: number, tokenCharset: string } = JSON.parse(removeComments(rawData))
 
 
 // PORT
@@ -46,7 +46,8 @@ log("TOKEN", ["The token is: " + token])
 
 
 // Initializes the "database"
-export const tables = new Map<string, number[]>()
+export var tables = new Map<string, unknown[]>()
+
 
 // Initialize websocket server
 export const wss = new webSocket.WebSocketServer({ port: webSocketPort })

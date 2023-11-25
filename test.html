@@ -42,6 +42,8 @@
             // disables the other 2
             document.getElementById("send").disabled = true
             document.getElementById("message").disabled = true
+
+            document.getElementById("mess").innerHTML += "<div style='color: red'><hr>disconnected <hr> </div> <hr>"
         })
 
         socket.addEventListener("message", function (event) {
