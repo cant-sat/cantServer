@@ -1,8 +1,12 @@
 {
     "files.exclude": {
         "**/node_modules": true,
-        "**/.gitignore" : true,
+        "**/.gitignore" : false,
         "**/package-lock.json" : true,
-        "**/*.js.map": true
+        "**/*.js.map": true,
+        "README.md" : true,
+        "LICENSE" : true,
+        "package.json": true,
+        "build" : true
     }
 }
