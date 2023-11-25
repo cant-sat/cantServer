@@ -1,5 +1,6 @@
-import { settings } from "./index.js";
-
+import { mkdirSync, writeFileSync } from "fs";
+import { settings, tables } from "./index.js";
+import dateTime from "date-time";
 
 export function removeComments(data: string) : string {
     var ret : string = ""
@@ -42,4 +43,20 @@ export function formatToken(data: string) : string{
     }
 
     return ret
+}
+
+
+export function writeTables(){
+    var time = dateTime({local: false, showMilliseconds: false})
+    try{mkdirSync("./tables")} catch{}
+    mkdirSync("./tables/"+ time)
+    tables.forEach((value, key: string) => {
+        var table = {
+            table: key,
+            values: value
+        }
+        writeFileSync("tables/" + time + "/" + table.table + ".txt", JSON.stringify(table.values), "utf8")
+    })
+
+    process.exit()
 }

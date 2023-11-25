@@ -2,13 +2,14 @@ import * as webSocket from "ws"
 import { connection } from "./ws.js"
 import * as randomstring from "randomstring"
 import { readFileSync, writeFileSync, } from "fs"
-import { formatToken, isWhole, removeComments } from "./format.js"
+import { formatToken, isWhole, removeComments, writeTables } from "./format.js"
 import { error, table } from "console"
 import { log } from "./logger.js"
+import ON_DEATH from "death"
 
 // Read in the settings
 var rawData = readFileSync("settings.json", "utf8")
-export const settings: {token: number, port: number, tokenCharset: string } = JSON.parse(removeComments(rawData))
+export const settings: {token: number, port: number, tokenCharset: string, sendDataBack :boolean, multipleTypesInTable : boolean } = JSON.parse(removeComments(rawData))
 
 
 // PORT
@@ -48,8 +49,13 @@ log("TOKEN", ["The token is: " + token])
 // Initializes the "database"
 export var tables = new Map<string, unknown[]>()
 
-
 // Initialize websocket server
 export const wss = new webSocket.WebSocketServer({ port: webSocketPort })
 
 wss.on("connection", connection)
+
+// if the server closes or anything happens writes the ta
+wss.on("error", writeTables)
+wss.on("close", writeTables)
+process.on("SIGHUP", writeTables)
+ON_DEATH(writeTables)

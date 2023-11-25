@@ -52,7 +52,7 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
                 // if the table exists
                 if(tables.has(newEntrie.table)){
                     var values = tables.get(newEntrie.table)
-                    if(typeof values[0] == typeof newEntrie.value){
+                    if(typeof values[0] == typeof newEntrie.value || settings.multipleTypesInTable){
                         // adds new value to the table
                         values[values.length] = newEntrie.value
                         tables.set(newEntrie.table, values)
@@ -72,11 +72,13 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
                 // sends out message to all the websockets
                 var i = 0
 
+                //sends new data to all the clients
                 wss.clients.forEach((client: webSocket.WebSocket) => {
-                    if (client != ws && client.readyState == webSocket.WebSocket.OPEN) {
+                    if ((client != ws || settings.sendDataBack) && client.readyState == webSocket.WebSocket.OPEN) {
                         i += 1
                         client.send(JSON.stringify(newEntrie))
                     }
+                    
                 })
 
                 log("sent out new data", ["to table: "+ newEntrie.table, "data: " + newEntrie.value, "to "+ i + " number of clients"])
