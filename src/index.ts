@@ -15,7 +15,9 @@ export const settings: {
     tokenCharset: string, 
     sendDataBack :boolean, 
     multipleTypesInTable : boolean, 
-    messageLenghtMaximum : number
+    messageLenghtMaximum : number,
+    writeToken: boolean,
+    sendVerificationBack : boolean
 } = JSON.parse(removeComments(rawData))
 
 
@@ -49,7 +51,9 @@ if (settings.token > 0 && isWhole(settings.token)) {
 
 } else { throw error("invalid token setting") }
 
-log("TOKEN", ["The token is: " + token])
+// writes out the token if the setting is enabled
+if(settings.writeToken){log("TOKEN", ["The token is: " + token])}
+
 
 
 

@@ -29,8 +29,10 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
             // authenticates the websocket if they send the token
             if (token == data.toString()) {
                 log("Authenticated a websocket")
-                ws.send("authenticated")
 
+                if (settings.sendVerificationBack) {
+                    ws.send("authenticated")
+                }
                 authenticated = true
                 isThereAuthenticated = true
                 return
@@ -41,7 +43,7 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
 
             //if the message is too long terminates it
             var stringified = data.toString()
-            if(stringified.length > settings.messageLenghtMaximum){
+            if (stringified.length > settings.messageLenghtMaximum) {
                 logError(["Message too long"])
                 ws.terminate()
                 return
