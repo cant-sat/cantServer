@@ -29,6 +29,7 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
             // authenticates the websocket if they send the token
             if (token == data.toString()) {
                 log("Authenticated a websocket")
+                ws.send("authenticated")
 
                 authenticated = true
                 isThereAuthenticated = true
