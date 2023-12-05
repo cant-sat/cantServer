@@ -173,6 +173,8 @@ function addData(table: string, value: any) {
         //creates table
         tables.set(table, [value])
         log("created " + table, ["with value: " + value])
+
+        return
     }
 
     var values = tables.get(table)
