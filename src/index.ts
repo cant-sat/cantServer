@@ -17,7 +17,8 @@ export const settings: {
     multipleTypesInTable : boolean, 
     messageLenghtMaximum : number,
     writeToken: boolean,
-    sendVerificationBack : boolean
+    sendVerificationBack : boolean,
+    chunkInterval : number
 } = JSON.parse(removeComments(rawData))
 
 

@@ -1,5 +1,5 @@
 {
-    "token": 20, // 0 is read in from a file (token.txt), otherwise sets the lenght of the random token
+    "token": 0, // 0 is read in from a file (token.txt), otherwise sets the lenght of the random token
     "tokenCharset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", // pwease dwont twoutch mwe
     "writeToken" : true, // writes out the token to the console
 
@@ -10,5 +10,7 @@
     "sendVerificationBack" : true,
 
     "multipleTypesInTable" : false, // if set to true you can put multiple variable types into a table
-    "messageLenghtMaximum" : 256 // sets the max lenght of a message
+    "messageLenghtMaximum" : 256, // sets the max lenght of a message
+
+    "chunkInterval" : 0.5 // the seconds between sending out the chunks, set to 0 if you want it to send it instantly but that is not recommended
 }

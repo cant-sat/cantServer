@@ -71,3 +71,10 @@ export function writeTables() {
     log("Exitted sucessfully")
     process.exit()
 }
+
+export function validVariable(variable : any){
+    if(variable == null || variable == undefined){
+        return false
+    }
+    return true
+}
