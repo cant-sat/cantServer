@@ -3,9 +3,10 @@ import { log, logError } from "./logger.js"
 import { tables, token, wss, settings } from "./index.js"
 import { ClientRequest } from "http"
 import { error, table } from "console"
-import { formatText } from "./format.js"
+import { formatText, validVariable } from "./format.js"
 
 var isThereAuthenticated: boolean = false
+var chunkInterval: NodeJS.Timeout
 
 export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
     log("Someone Connected to websocket", ["with ip: " + req.socket.remoteAddress])
@@ -18,6 +19,8 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
         }
         ws.send(JSON.stringify(table))
     })
+
+
 
     // sets the default authentication to false
     var authenticated: boolean = false
@@ -52,49 +55,52 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
 
             // checks if the thing sent is valid json
             try {
-                var newEntrie: { table: string, value: unknown } = JSON.parse(stringified)
+                var newEntrie: {
+                    table: string,
+                    value: unknown,
+                    values: [unknown],
+                    entries: [{ table: string, value: unknown, values: [unknown] }]
+                } = JSON.parse(stringified)
 
-                // if the table exists
-                if (tables.has(newEntrie.table)) {
-                    var values = tables.get(newEntrie.table)
-                    if (typeof values[0] == typeof newEntrie.value || settings.multipleTypesInTable) {
-                        // adds new value to the table
-                        values[values.length] = newEntrie.value
-                        tables.set(newEntrie.table, values)
+                // handles all the different cases
+                if (validVariable(newEntrie.table)) {
+                    // handles errors
+                    if (validVariable(newEntrie.entries)) {
+                        throw "you cant have table and entries"
                     }
-                    else {
-                        throw "all values in the table need to be the same type"
+                    //checks if value exists but values doesnt
+                    else if (validVariable(newEntrie.value) && !validVariable(newEntrie.values)) {
+                        addData(newEntrie.table, newEntrie.value)
+                    } 
+                    //checks if values exists but value doesnt
+                    else if (!validVariable(newEntrie.value) && validVariable(newEntrie.values)) {
+                        addData(newEntrie.table, newEntrie.values)
+                    } else {
+                        throw "you cant have value and values both or neither"
                     }
 
+                } else if (validVariable(newEntrie.entries) || newEntrie.entries.length > 0) {
+                    newEntrie.entries.forEach((entrie: { table: string, value: unknown, values: [unknown] }) => {
+                        //checks if value exists but values doesnt
+                        if (validVariable(entrie.value) && !validVariable(entrie.values)) {
+                            addData(entrie.table, entrie.value)
+                        }
+                        //checks if values exists but value doesnt 
+                        else if (!validVariable(entrie.value) && validVariable(entrie.values)) {
+                            addData(entrie.table, entrie.values)
+                        } else {
+                            throw "you cant have value and values both or neither in entries"
+                        }
+                    })
+                } else {
+                    // different errors
+                    if (newEntrie.entries.length > 0) {
+                        throw "entries has to have an element"
+                    } else {
+                        throw "entries or table has to have a value"
+                    }
                 }
-                //if the table doesnt exist
-                else {
-                    // Handles errors
-                    if (newEntrie.table == null || newEntrie.table != formatText(newEntrie.table) || newEntrie.table.length == 0) {
-                        throw "table needs to have value"
-                    }
-                    if (newEntrie.value == null || newEntrie.table.length == 0) {
-                        throw "value needs to have value"
-                    }
 
-                    //creates new table
-                    tables.set(newEntrie.table, [newEntrie.value])
-                    log("created new table: " + newEntrie.table)
-                }
-
-                // sends out message to all the websockets
-                var i = 0
-
-                //sends new data to all the clients
-                wss.clients.forEach((client: webSocket.WebSocket) => {
-                    if ((client != ws || settings.sendDataBack) && client.readyState == webSocket.WebSocket.OPEN) {
-                        i += 1
-                        client.send(JSON.stringify(newEntrie))
-                    }
-
-                })
-
-                log("sent out new data", ["to table: " + newEntrie.table, "data: " + newEntrie.value, "to " + i + " number of clients"])
                 return
 
             } catch (err) {
@@ -140,5 +146,47 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
 
         ws.terminate()
     })
+
+}
+
+
+function addData(table: string, value: any) {
+
+    log("try adding data", [table, value])
+
+
+
+    // if the value is an array then loops through it
+    if (typeof value == typeof []) {
+        value.forEach((element) => {
+            addData(table, element)
+        })
+        return
+    }
+
+    if (tables.has(table) == false) {
+        // checks for illegal charachters
+        if (table != formatText(table)) {
+            throw "illegal charachter in table"
+        }
+
+        //creates table
+        tables.set(table, [value])
+        log("created " + table, ["with value: " + value])
+    }
+
+    var values = tables.get(table)
+
+    if (typeof values[0] == typeof value || settings.multipleTypesInTable) {
+        // adds new value to the table
+        values[values.length] = value
+        tables.set(table, values)
+
+        return true
+    }
+    else {
+        throw "all values in the table need to be the same type"
+    }
+
 
 }
