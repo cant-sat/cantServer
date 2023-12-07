@@ -4,9 +4,12 @@ import { tables, token, wss, settings } from "./index.js"
 import { ClientRequest } from "http"
 import { error, table } from "console"
 import { formatText, validVariable } from "./format.js"
+import { clearInterval } from "timers"
 
-var isThereAuthenticated: boolean = false
-var chunkInterval: NodeJS.Timeout
+var authenticatedWS: webSocket.WebSocket = null
+var chunkInterval: NodeJS.Timeout = null
+
+var sendOut: Map<string, unknown[]> = new Map<string, unknown[]>()
 
 export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
     log("Someone Connected to websocket", ["with ip: " + req.socket.remoteAddress])
@@ -20,14 +23,13 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
         ws.send(JSON.stringify(table))
     })
 
-
-
+    
     // sets the default authentication to false
     var authenticated: boolean = false
 
     ws.on("message", (data: webSocket.RawData, isBinary: boolean) => {
 
-        if (isThereAuthenticated == false) {
+        if (authenticatedWS == null) {
 
             // authenticates the websocket if they send the token
             if (token == data.toString()) {
@@ -37,7 +39,7 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
                     ws.send("authenticated")
                 }
                 authenticated = true
-                isThereAuthenticated = true
+                authenticatedWS = ws
                 return
             }
         }
@@ -74,7 +76,7 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
                     } 
                     //checks if values exists but value doesnt
                     else if (!validVariable(newEntrie.value) && validVariable(newEntrie.values)) {
-                        addData(newEntrie.table, newEntrie.values)
+                        addData(newEntrie.table, newEntrie.values, true)
                     } else {
                         throw "you cant have value and values both or neither"
                     }
@@ -87,7 +89,7 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
                         }
                         //checks if values exists but value doesnt 
                         else if (!validVariable(entrie.value) && validVariable(entrie.values)) {
-                            addData(entrie.table, entrie.values)
+                            addData(entrie.table, entrie.values, true)
                         } else {
                             throw "you cant have value and values both or neither in entries"
                         }
@@ -99,6 +101,14 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
                     } else {
                         throw "entries or table has to have a value"
                     }
+                }
+
+
+                // starts the chunk interval
+                if(chunkInterval == null && settings.chunkInterval != 0){
+                    chunkInterval = setInterval(send, settings.chunkInterval * 1000)
+                } else if(settings.chunkInterval == 0){
+                    send()
                 }
 
                 return
@@ -122,7 +132,7 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
     // Handles closing
     ws.on("close", () => {
         if (authenticated) {
-            isThereAuthenticated = false
+            authenticatedWS = null
             log("Terminated websocket", ["With ip: " + req.socket.remoteAddress, "Closed", "Unauthenticated him"])
             authenticated = false
             ws.terminate()
@@ -136,7 +146,7 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
     // handles error
     ws.on("error", () => {
         if (authenticated) {
-            isThereAuthenticated = false
+            authenticatedWS = ws
             log("Terminated websocket", ["With ip: " + req.socket.remoteAddress, "Error occured", "Unauthenticated him"])
             authenticated = false
             ws.terminate()
@@ -150,14 +160,14 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
 }
 
 
-function addData(table: string, value: any) {
+function addData(table: string, value: any, isArray : boolean = false) {
 
     log("try adding data", [table, value])
 
 
 
     // if the value is an array then loops through it
-    if (typeof value == typeof []) {
+    if (typeof value == typeof [] && isArray) {
         value.forEach((element) => {
             addData(table, element)
         })
@@ -174,6 +184,9 @@ function addData(table: string, value: any) {
         tables.set(table, [value])
         log("created " + table, ["with value: " + value])
 
+        // adds the value to the sendout
+        addToSendOut(table, value)
+
         return
     }
 
@@ -184,11 +197,68 @@ function addData(table: string, value: any) {
         values[values.length] = value
         tables.set(table, values)
 
+        // adds the value to the sendout
+        addToSendOut(table, value)
+
         return true
     }
     else {
         throw "all values in the table need to be the same type"
     }
 
+
+}
+
+function send(){
+    
+
+    clearInterval(chunkInterval)
+    chunkInterval = null
+
+    var temp : {entries : [{table : string, values : unknown[]}]} = {entries : [null]}
+
+    temp.entries.pop()
+
+    sendOut.forEach((value : unknown[], key: string) => {
+        temp.entries.push({table : key, values : value})
+    })
+
+    console.log(temp)
+
+    var i = 0
+
+    var data = JSON.stringify(temp)
+
+    wss.clients.forEach((client: webSocket.WebSocket) => {
+        if ((client != authenticatedWS || settings.sendDataBack) && client.readyState == webSocket.WebSocket.OPEN) {
+            i += 1
+            client.send(data)
+        }
+
+    })
+
+    log("sent out new data", ["to " + i + " number of clients"])
+
+    sendOut = new Map<string, unknown[]>()
+}
+
+
+
+// adds values to the send out map
+function addToSendOut(table : string, value : unknown){
+    if(sendOut.has(table)){
+        console.log("added to send")
+
+        var add = sendOut.get(table)
+        add[add.length] = value
+
+        sendOut.set(table, add)
+        return
+    } 
+    else {
+
+        console.log("created send")
+        sendOut.set(table, [value])
+    }
 
 }

@@ -6,7 +6,7 @@
     "port" : 12345, // sets the port of the websocket server
 
 
-    "sendDataBack": true, // decides if the server sends data back to the socket where it came from
+    "sendDataBack": false, // decides if the server sends data back to the socket where it came from
     "sendVerificationBack" : true,
 
     "multipleTypesInTable" : false, // if set to true you can put multiple variable types into a table
