@@ -7,7 +7,7 @@
 
 
     "sendDataBack": false, // decides if the server sends data back to the socket where it came from
-    "sendVerificationBack" : true,
+    "sendVerificationBack" : true, // sends back "authenticated" when a websocket authenticates
 
     "multipleTypesInTable" : false, // if set to true you can put multiple variable types into a table
     "messageLenghtMaximum" : 256, // sets the max lenght of a message
