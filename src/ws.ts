@@ -162,10 +162,6 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
 
 function addData(table: string, value: any, isArray : boolean = false) {
 
-    log("try adding data", [table, value])
-
-
-
     // if the value is an array then loops through it
     if (typeof value == typeof [] && isArray) {
         value.forEach((element) => {
@@ -182,7 +178,6 @@ function addData(table: string, value: any, isArray : boolean = false) {
 
         //creates table
         tables.set(table, [value])
-        log("created " + table, ["with value: " + value])
 
         // adds the value to the sendout
         addToSendOut(table, value)
@@ -211,24 +206,25 @@ function addData(table: string, value: any, isArray : boolean = false) {
 
 function send(){
     
-
+    //  clears the chunks interval
     clearInterval(chunkInterval)
     chunkInterval = null
 
     var temp : {entries : [{table : string, values : unknown[]}]} = {entries : [null]}
 
+    // needs this to work
     temp.entries.pop()
 
+    //loops through send back and adds all the data to the temp variable
     sendOut.forEach((value : unknown[], key: string) => {
         temp.entries.push({table : key, values : value})
     })
-
-    console.log(temp)
 
     var i = 0
 
     var data = JSON.stringify(temp)
 
+    // sends out the data to all the connected websockets
     wss.clients.forEach((client: webSocket.WebSocket) => {
         if ((client != authenticatedWS || settings.sendDataBack) && client.readyState == webSocket.WebSocket.OPEN) {
             i += 1
@@ -237,8 +233,9 @@ function send(){
 
     })
 
-    log("sent out new data", ["to " + i + " number of clients"])
+    log("sent out new data", ["to " + i + " number of clients", data])
 
+    // resets sendOut
     sendOut = new Map<string, unknown[]>()
 }
 
@@ -247,7 +244,6 @@ function send(){
 // adds values to the send out map
 function addToSendOut(table : string, value : unknown){
     if(sendOut.has(table)){
-        console.log("added to send")
 
         var add = sendOut.get(table)
         add[add.length] = value
@@ -256,8 +252,6 @@ function addToSendOut(table : string, value : unknown){
         return
     } 
     else {
-
-        console.log("created send")
         sendOut.set(table, [value])
     }
 
