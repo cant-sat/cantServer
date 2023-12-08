@@ -14,15 +14,19 @@ var sendOut: Map<string, unknown[]> = new Map<string, unknown[]>()
 export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
     log("Someone Connected to websocket", ["with ip: " + req.socket.remoteAddress])
 
-    // sends the websocket all the existing tables
-    tables.forEach((value, key: string) => {
-        var table = {
-            table: key,
-            values: value
-        }
-        ws.send(JSON.stringify(table))
-    })
 
+    // sends the websocket all the existing tables
+    var temp : {entries : [{table : string, values : unknown[]}]} = {entries : [null]}
+
+    // needs this to work
+    temp.entries.pop()
+
+    //loops through tables back and adds all the data to the temp variable
+    tables.forEach((value : unknown[], key: string) => {
+        temp.entries.push({table : key, values : value})
+    })
+    ws.send(JSON.stringify(temp))
+    
     
     // sets the default authentication to false
     var authenticated: boolean = false

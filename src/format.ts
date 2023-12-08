@@ -47,7 +47,7 @@ export function formatText(data: string): string {
 }
 
 
-export function writeTables() {
+export function writeTables() : void{
     var time = dateTime({ local: false, showMilliseconds: false })
 
     if (tables.size > 0) {

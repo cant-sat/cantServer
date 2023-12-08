@@ -10,15 +10,16 @@ import ON_DEATH from "death"
 // Read in the settings
 var rawData = readFileSync("settings.json", "utf8")
 export const settings: {
-    token: number, 
-    port: number, 
-    tokenCharset: string, 
-    sendDataBack :boolean, 
-    multipleTypesInTable : boolean, 
-    messageLenghtMaximum : number,
+    token: number,
+    port: number,
+    tokenCharset: string,
+    sendDataBack: boolean,
+    multipleTypesInTable: boolean,
+    messageLenghtMaximum: number,
     writeToken: boolean,
-    sendVerificationBack : boolean,
-    chunkInterval : number
+    sendVerificationBack: boolean,
+    chunkInterval: number,
+    saveTablesToFile: boolean
 } = JSON.parse(removeComments(rawData))
 
 
@@ -31,7 +32,7 @@ export var token: string
 // handles the token setting
 if (settings.token > 0 && isWhole(settings.token)) {
     //generates a random Token 
-    token = randomstring.generate({ length: settings.token, readable: true, charset: settings.tokenCharset})
+    token = randomstring.generate({ length: settings.token, readable: true, charset: settings.tokenCharset })
 } else if (settings.token == 0) {
     // reads the token.txt
     try {
@@ -45,7 +46,7 @@ if (settings.token > 0 && isWhole(settings.token)) {
         // generates a random token cause token.txt wasnt found
         token = randomstring.generate({ length: 20, readable: true, charset: settings.tokenCharset })
         log("Token.txt not found, generated token")
-        
+
         // writes the random token to token.txt
         writeFileSync("token.txt", token)
     }
@@ -53,7 +54,7 @@ if (settings.token > 0 && isWhole(settings.token)) {
 } else { throw error("invalid token setting") }
 
 // writes out the token if the setting is enabled
-if(settings.writeToken){log("TOKEN", ["The token is: " + token])}
+if (settings.writeToken) { log("TOKEN", ["The token is: " + token]) }
 
 
 
@@ -66,8 +67,13 @@ export const wss = new webSocket.WebSocketServer({ port: webSocketPort })
 
 wss.on("connection", connection)
 
-// if the server closes or anything happens writes the ta
-wss.on("error", writeTables)
-wss.on("close", writeTables)
-process.on("SIGHUP", writeTables)
-ON_DEATH(writeTables)
+if (settings.saveTablesToFile) {
+    // if the server closes or anything happens writes the tables to a file
+    wss.on("error", writeTables)
+    wss.on("close", writeTables)
+    process.on("SIGHUP", writeTables)
+    ON_DEATH(writeTables)
+}
+else {
+    log("SAVING FILES IS TURNED OFF")
+}
