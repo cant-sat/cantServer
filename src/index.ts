@@ -75,5 +75,5 @@ if (settings.saveTablesToFile) {
     ON_DEATH(writeTables)
 }
 else {
-    log("SAVING FILES IS TURNED OFF")
+    log("!! SAVING FILES IS TURNED OFF !!")
 }
