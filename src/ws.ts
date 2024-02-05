@@ -10,6 +10,7 @@ var authenticatedWS: webSocket.WebSocket = null
 var chunkInterval: NodeJS.Timeout = null
 
 var sendOut: Map<string, unknown[]> = new Map<string, unknown[]>()
+var snapShot : Map<string, unknown[]> = new Map<string, unknown[]>()
 
 export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
     log("Someone Connected to websocket", ["with ip: " + req.socket.remoteAddress])
@@ -22,7 +23,7 @@ export function connection(ws: webSocket.WebSocket, req: ClientRequest) {
     temp.entries.pop()
 
     //loops through tables back and adds all the data to the temp variable
-    tables.forEach((value : unknown[], key: string) => {
+    snapShot.forEach((value : unknown[], key: string) => {
         temp.entries.push({table : key, values : value})
     })
     ws.send(JSON.stringify(temp))
@@ -238,6 +239,8 @@ function send(){
     })
 
     log("sent out new data", ["to " + i + " number of clients", data])
+
+    snapShot = tables
 
     // resets sendOut
     sendOut = new Map<string, unknown[]>()
