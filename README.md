@@ -12,3 +12,5 @@ How to develop:
   4. now everytime you save the script compiles then in the other terminal you can run it with: `node .`
 
 You need to run `node .` as sudo if you are using linux if you dont the websocket server will not work
+
+To change some settings you can by changing some values in the settings.json!
