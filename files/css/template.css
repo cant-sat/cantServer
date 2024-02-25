@@ -1,0 +1,175 @@
+/* declare color variables */
+:root {
+    --black-color: #1d1d1d;
+    --red-color: #A30900;
+    --grey-color: #8A8A8A;
+    --white-color: #E2E2E2;
+   --blue-color: #256A6F;
+}
+
+/* make flexbox */
+body {
+    color: var(--blue-color);
+
+    background-color: var(--black-color);
+
+    font-family: 'Roboto', sans-serif;
+
+    font-size: xx-large;
+
+    padding: 0%;
+    margin: 0%;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+
+
+    justify-content: center;
+    align-items: center;
+
+    min-height: 100vh;
+}
+
+#top {
+    background-color: var(--white-color);
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    flex: 0 0 auto;
+    width: 100%;
+    height: 12vh;
+
+    overflow: hidden;
+
+    padding: 0;
+    padding-bottom: 1%;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    font-size: 100%;
+}
+
+#content {
+    background-color: var(--black-color);
+    background-image: url("/images/wavey-fingerprint.svg");
+
+    flex: 1;
+    width: 100%;
+    max-height: calc(100vh - 15vh);
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+}
+
+/* ------------ */
+/* top bar */
+#otherPages > a{
+    text-decoration: none;
+    color: inherit;
+
+    display: inline-block;
+
+    transition: all 0.3s;
+
+    padding-right: 10px;
+    padding-left: 10px;
+    border-radius: 10px;
+
+    transform: scale(1);
+
+    font-size: 4.2vh;
+}
+
+/* @media (min-width: 800px) {
+    #otherPages > a {
+    
+        font-size: 4.2vh;
+        
+    }
+  } */
+
+  #otherPages > a:hover{
+    background-color: var(--grey-color);
+
+    transform:scale(1.2);
+
+    color: var(--red-color);
+}
+
+
+
+#otherPages {
+    height: 100%;
+
+    text-align: center;
+    flex: 2.8 1vh;
+    display: block;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    
+}
+
+
+#logo {
+    height: 100%;
+
+    flex: 1;
+
+    background-image: url("/images/logo.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: 0% 30%;
+
+    width: 15vh;
+    height: 15vh;
+
+    display: block;
+
+
+
+}
+
+
+
+#githubLogo{
+
+    height: 100%;
+
+    flex: 1;
+
+    background-image: url("/images/github-mark.svg");
+    background-repeat: no-repeat;
+    background-size: 9vh;
+    background-position: 30% 55%;
+
+    width: 15vh;
+    height: 15vh;
+
+    display: block;
+    transition: all 0.3s;
+}
+#githubLogo:hover{
+    background-size: 11vh;
+    
+}
+
+
+/* end of top bar */
+
+
+#content-placeholder {
+    margin: 5px 10px;
+    overflow-y: hidden;
+}
