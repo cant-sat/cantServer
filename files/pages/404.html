@@ -1,0 +1,30 @@
+<body>
+    <style>
+        #image{
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+
+            border-radius: 15px;
+            padding: 0.3%;
+            background-color: #E2E2E2;
+
+        }
+        #image:hover{
+            cursor: pointer;
+        }
+    </style>
+
+    <audio src="sounds/scream.mp3" id="scream" ></audio>
+
+    <img src="images/404.jpeg" height="70%" id="image" onclick="pressed()">
+</body>
+
+<script src="js/load.js"></script>
+
+<script> 
+    function pressed(){
+        document.getElementById("scream").play()
+    }
+</script>

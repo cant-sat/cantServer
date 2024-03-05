@@ -72,7 +72,9 @@ export function writeTables() : void{
     process.exit()
 }
 
-export function validVariable(variable : any){
+
+
+export function validVariable(variable : any): boolean{
     if(variable == null || variable == undefined){
         return false
     }

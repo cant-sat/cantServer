@@ -20,7 +20,30 @@
     "webServer" : true, // if set to true the server will also work as a web server
     "pages" : [
         // use this syntax if you want to add more pages: 
-        // {"cache" : true, "path": "fileLocation", "redirects" : ["/url1", "/url2"]},
-    ]
+        // {"cache" : true, "path": "fileLocation", "redirects" : ["/url1", "/url2"]}
+        //   decides whether the page is cached or not, recommended for images and sounds not reccomended for pages still in development
+        //                   set the file location of the page like this: ./folder/example.html
+        //                                           sets the urls that send out that file
+        
+        // Medias
+        {"cache" : true, "path" : "./files/images/404.jpeg", "redirects" : ["/404.jpeg"]},
+        {"cache" : true, "path" : "./files/images/favicon.ico", "redirects" : ["/favicon.ico"]},
+        {"cache" : true, "path" : "./files/sounds/scream.mp3", "redirects" : ["/sounds/scream.mp3"]},
+        {"cache" : true, "path" : "./files/images/logo.png", "redirects" : ["/images/logo.png"]},
+        {"cache" : true, "path" : "./files/images/github-mark.svg", "redirects" : ["/images/github-mark.svg"], "contentType" : "image/svg+xml"},
+        {"cache" : true, "path" : "./files/images/wavey-fingerprint.svg", "redirects" : ["/images/wavey-fingerprint.svg"], "contentType" : "image/svg+xml"},
+
+        // Scripts
+        {"cache" : true, "path" : "./files/js/load.js", "redirects" : ["/js/load.js"]},
+        {"cache" : true, "path" : "./files/js/chart.js", "redirects" : ["/js/chart.js"]},
+
+        // CSS
+        {"cache" : true, "path" : "./files/css/template.css", "redirects" : ["/css/template.css"]},
+
+        // Pages
+        {"cache" : true, "path" : "./files/pages/template.html", "redirects" : ["/template.html"]},
+        {"cache" : true, "path" : "./files/pages/live.html", "redirects" : ["/", "/live"]}
+    ],
+    "errorPage" : {"path" : "./files/pages/404.html", "cache" : true} // set this to whatever you want the 404 page to be
     
 }

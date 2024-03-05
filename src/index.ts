@@ -24,7 +24,8 @@ export const settings: {
     chunkInterval: number,
     saveTablesToFile: boolean,
     webServer: boolean,
-    pages : {redirects : string[], path : string, cache : boolean}[],
+    pages: { redirects: string[], path: string, cache: boolean, contentType : string }[],
+    errorPage: { path: string, cache : boolean},
 } = JSON.parse(removeComments(rawData))
 
 // PORT
@@ -65,19 +66,32 @@ if (settings.writeToken) { log("TOKEN", ["The token is: " + token]) }
 
 
 // Initializes the "database"
-export var tables : Map<string, unknown[]> = new Map<string, unknown[]>()
+export var tables: Map<string, unknown[]> = new Map<string, unknown[]>()
 
 // Initialize websocket server
-export const wss : webSocket.WebSocketServer = new webSocket.WebSocketServer({ port: webSocketPort })
+export const wss: webSocket.WebSocketServer = new webSocket.WebSocketServer({ port: webSocketPort })
 
 wss.on("connection", connection)
 
-// Initializes the web server
-export const app : express.Express = express.default()
+// varaibles for webserver
+export var app: express.Express = null
+export var redirects: Map<string, {cache : boolean, fileLocation : string, contentType : string}> = null
 
-app.get("*", get)
-app.listen(webServerPort, started)
+if (settings.webServer) {
+    // Initializes the web server
+    app = express.default()
+    redirects = new Map<string, {cache : boolean, fileLocation : string, contentType: string}>()
 
+    app.get("*", get)
+    app.listen(webServerPort, started)
+
+    // Initializes redirects
+    settings.pages.forEach(page => {
+        page.redirects.forEach(redirect => {
+            redirects.set(redirect, {cache : page.cache, fileLocation : page.path, contentType : page.contentType})
+        });
+    });
+}
 
 // File saving
 if (settings.saveTablesToFile) {
