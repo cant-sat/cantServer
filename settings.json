@@ -26,7 +26,7 @@
         //                                           sets the urls that send out that file
         
         // Medias
-        {"cache" : true, "path" : "./files/images/404.jpeg", "redirects" : ["/404.jpeg"]},
+        {"cache" : true, "path" : "./files/images/404.jpeg", "redirects" : ["/images/404.jpeg"], "contentType" : "image/jpeg"},
         {"cache" : true, "path" : "./files/images/favicon.ico", "redirects" : ["/favicon.ico"]},
         {"cache" : true, "path" : "./files/sounds/scream.mp3", "redirects" : ["/sounds/scream.mp3"]},
         {"cache" : true, "path" : "./files/images/logo.png", "redirects" : ["/images/logo.png"]},
@@ -42,7 +42,7 @@
 
         // Pages
         {"cache" : true, "path" : "./files/pages/template.html", "redirects" : ["/template.html"]},
-        {"cache" : true, "path" : "./files/pages/live.html", "redirects" : ["/", "/live"]}
+        {"cache" : true, "path" : "./files/pages/live.html", "redirects" : ["/", "/live", "/live.html"]}
     ],
     "errorPage" : {"path" : "./files/pages/404.html", "cache" : true} // set this to whatever you want the 404 page to be
     
