@@ -13,7 +13,7 @@
     "multipleTypesInTable" : false, // if set to true you can put multiple variable types into a table
     "messageLenghtMaximum" : 256, // sets the max lenght of a message
 
-    "chunkInterval" : 10, // the seconds between sending out the chunks, set to 0 if you want it to send it instantly but that is not recommended
+    "chunkInterval" : 1, // the seconds between sending out the chunks, set to 0 if you want it to send it instantly but that is not recommended
 
     "saveTablesToFile" : false, //  set to true if you want the tables to be saved in a file
 
