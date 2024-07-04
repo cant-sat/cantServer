@@ -3,7 +3,7 @@
     "tokenCharset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", // pwease dwont twoutch mwe (the allowed charachters in a token)
     "writeToken" : true, // writes out the token to the console
 
-    "port" : 12345, // sets the port of the websocket server
+    "port" : 443, // sets the port of the websocket server
     "webPort" : 80, // sets the port for the website
 
 
